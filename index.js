@@ -76,17 +76,24 @@ async function runSystem() {
                     // --- PHASE B: SEND EMAIL ---
                     if (config.run.sendEmails) {
                         if (!fs.existsSync(filePath)) {
-                            console.error(`Cannot email ${name}: PDF not found at ${filePath}`);
-                            continue;
+                            await transporter.sendMail({
+                            from: `"Event Team" <${config.email.user}>`,
+                            to: email,
+                            subject: setup.message.subject,
+                            text: setup.message.body(name)
+                        });
                         }
-
-                        await transporter.sendMail({
+                        else{
+                            await transporter.sendMail({
                             from: `"Event Team" <${config.email.user}>`,
                             to: email,
                             subject: setup.message.subject,
                             text: setup.message.body(name),
                             attachments: [{ filename: fileName, path: filePath }]
                         });
+                        }
+
+                        
                         console.log(`Emailed to: ${email}`);
                         
                         // Prevent rate-limiting
@@ -96,6 +103,7 @@ async function runSystem() {
                 } catch (error) {
                     console.error(`Error processing ${name}:`, error);
                 }   
+                counter++;
             }
             console.log('\nDone!');
         });

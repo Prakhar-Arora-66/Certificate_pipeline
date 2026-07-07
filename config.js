@@ -2,7 +2,7 @@ require('dotenv').config();
 module.exports = {
     run: {
         generateCertificates: true,
-        sendEmails: false
+        sendEmails: true
     },
     paths: {
         template: './data/template.pdf',
